@@ -224,19 +224,32 @@ button:active {
   flex-shrink: 0;
 }
 
-/* Message List */
+/* Message List Container */
 .message-list {
-  background: var(--bg-card);
+  background: var(--bg-subtle);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
+/* Kartu Tiap Email (Independen Neobrutalism Card) */
 .message-item {
-  border-bottom: var(--border-med);
-  transition: background 0.1s ease;
   background: var(--bg-card);
+  border: var(--border-thick);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hard);
+  overflow: hidden;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
-.message-item:last-child {
-  border-bottom: none;
+.message-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hard-lg);
+}
+
+.message-item.active {
+  box-shadow: var(--shadow-hard-lg);
 }
 
 /* Header Email Klikabel */
@@ -253,7 +266,7 @@ button:active {
 
 .message-item.active .msg-header-card {
   background: var(--yellow);
-  border-bottom: var(--border-med);
+  border-bottom: var(--border-thick);
 }
 
 .msg-sender-row {
