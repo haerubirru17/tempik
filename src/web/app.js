@@ -100,20 +100,34 @@ async function loadMessages() {
   if (!address) return;
   currentInbox.textContent = address;
   const messages = await fetchJson(`/api/inboxes/${encodeURIComponent(address)}/messages`);
-  messageCount.textContent = `${messages.length} messages`;
+  messageCount.textContent = `${messages.length} pesan`;
 
   if (!messages.length) {
-    messageList.innerHTML = '<div class="empty-state"><div class="icon">✉️</div><div class="title">Inbox empty</div><div class="sub">Emails sent to this address will appear here.</div></div>';
+    messageList.innerHTML = '<div class="empty-state"><div class="empty-title">Kotak Masuk Kosong</div><div class="empty-sub">Email yang dikirim ke alamat ini akan otomatis muncul di sini secara realtime.</div></div>';
     return;
   }
 
-  messageList.innerHTML = messages.map((msg) => `
-    <div class="message-item">
-      <div class="message-meta">From: ${msg.from_address} • ${new Date(msg.received_at).toLocaleString()}</div>
-      <strong>${msg.subject}</strong>
-      <p>${msg.body}</p>
+  messageList.innerHTML = messages.map((msg, idx) => `
+    <div class="message-item ${idx === 0 ? 'active' : ''}" onclick="toggleDetail(this)">
+      <div class="message-meta">
+        <span class="message-from">DARI: <b>${escapeHtml(msg.from_address)}</b></span>
+        <span class="message-date">${new Date(msg.received_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'medium' })}</span>
+      </div>
+      <div class="message-subject">${escapeHtml(msg.subject || '(Tanpa Subjek)')}</div>
+      <div class="message-detail">
+        <div class="message-body">${msg.html || `<pre style="white-space:pre-wrap;font-family:inherit;">${escapeHtml(msg.body || '(Pesan kosong)')}</pre>`}</div>
+      </div>
     </div>
   `).join('');
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function toggleDetail(el) {
+  document.querySelectorAll('.message-item').forEach(m => { if (m !== el) m.classList.remove('active'); });
+  el.classList.toggle('active');
 }
 
 function showToast(text) {
@@ -128,7 +142,7 @@ function showToast(text) {
 copyBtn.addEventListener('click', async () => {
   if (!inboxSelect.value) return;
   await navigator.clipboard.writeText(inboxSelect.value);
-  showToast('📋 Copied to clipboard');
+  showToast('Alamat email berhasil disalin!');
 });
 
 refreshBtn.addEventListener('click', loadMessages);

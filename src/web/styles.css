@@ -128,64 +128,32 @@ button:active {
   box-shadow: 0.5px 0.5px 0 var(--shadow);
 }
 
-#newBtn, #createCustomBtn {
-  background: var(--yellow);
+#createCustomBtn {
+  background: var(--green);
 }
-#newBtn:hover, #createCustomBtn:hover {
-  background: var(--yellow-hover);
+#createCustomBtn:hover {
+  background: #22C55E;
 }
 
-button.danger, #deleteBtn {
-  background: var(--red-soft);
-  color: #991B1B;
+#createRandomBtn {
+  background: var(--blue);
+  color: var(--ink);
 }
-button.danger:hover, #deleteBtn:hover {
-  background: var(--red);
+#createRandomBtn:hover {
+  background: #3B82F6;
   color: #FFFFFF;
 }
 
-/* New Box Drawer */
-.new-box {
-  background: var(--bg-card);
-  border: var(--border-thick);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-hard);
-  padding: 16px;
-  margin-bottom: 16px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  animation: slideDown 0.15s ease-out;
-}
-
-.new-box.hidden {
-  display: none !important;
-}
-
-.new-box input {
-  flex: 1 1 180px;
-  font: inherit;
-  font-weight: 700;
-  font-size: 14px;
-  padding: 10px 14px;
-  border: var(--border-med);
-  border-radius: var(--radius-sm);
-  background: var(--bg-page);
-  outline: none;
-  box-shadow: var(--shadow-hard-sm);
-}
-
-.new-box select {
-  flex: 0 0 160px;
-  font: inherit;
-  font-weight: 700;
-  font-size: 13px;
-  padding: 10px 12px;
-  border: var(--border-med);
-  border-radius: var(--radius-sm);
-  background: var(--bg-page);
-  outline: none;
-  box-shadow: var(--shadow-hard-sm);
+/* SVG Vector Icons styling */
+.ico-svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  flex-shrink: 0;
 }
 
 /* Main Panel */
@@ -200,7 +168,7 @@ button.danger:hover, #deleteBtn:hover {
 .panel-head {
   padding: 14px 18px;
   border-bottom: var(--border-thick);
-  background: var(--bg-page);
+  background: var(--bg-subtle);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -220,20 +188,22 @@ button.danger:hover, #deleteBtn:hover {
   background: var(--yellow);
   border: var(--border-thin);
   border-radius: 999px;
-  padding: 2px 10px;
+  padding: 3px 12px;
   box-shadow: 1.5px 1.5px 0 var(--shadow);
+  flex-shrink: 0;
 }
 
 /* Message List */
 .message-list {
-  divide-y: 2px solid var(--ink);
+  background: var(--bg-card);
 }
 
 .message-item {
-  padding: 14px 18px;
-  border-bottom: 2px dashed #D1D5DB;
+  padding: 16px 18px;
+  border-bottom: var(--border-med);
   cursor: pointer;
   transition: background 0.1s ease;
+  background: var(--bg-card);
 }
 
 .message-item:last-child {
@@ -241,57 +211,94 @@ button.danger:hover, #deleteBtn:hover {
 }
 
 .message-item:hover {
-  background: var(--bg-subtle);
+  background: #FEFCE8;
 }
 
 .message-item.active {
   background: #FEF9C3;
+  border-bottom: var(--border-thick);
 }
 
 .message-meta {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 4px;
+  align-items: center;
+  margin-bottom: 6px;
+  gap: 10px;
 }
 
 .message-from {
+  font-size: 13px;
   font-weight: 800;
-  font-size: 14px;
+  color: #1F2937;
+  font-family: 'JetBrains Mono', monospace;
+  word-break: break-all;
+}
+
+.message-from b {
   color: var(--ink);
+  font-weight: 900;
 }
 
 .message-date {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 800;
   color: #6B7280;
+  flex-shrink: 0;
+  background: var(--bg-page);
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  padding: 2px 6px;
 }
 
 .message-subject {
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--ink);
+  line-height: 1.35;
 }
 
 /* Detail Box */
 .message-detail {
-  padding: 18px;
-  background: #FAFAF9;
-  border-top: var(--border-thick);
+  display: none;
+  margin-top: 14px;
+  padding: 16px;
+  background: var(--bg-page);
+  border: var(--border-med);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+.message-item.active .message-detail {
+  display: block;
 }
 
 .message-body {
   font-size: 14px;
   line-height: 1.6;
-  color: #1F2937;
+  color: #111827;
   word-break: break-word;
 }
 
 .empty-state {
   text-align: center;
-  padding: 48px 16px;
-  color: #6B7280;
+  padding: 56px 20px;
+  background: var(--bg-card);
+}
+
+.empty-title {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.empty-sub {
+  font-size: 13px;
   font-weight: 700;
-  font-size: 14px;
+  color: #6B7280;
+  max-width: 360px;
+  margin: 0 auto;
 }
 
 /* Footer */
