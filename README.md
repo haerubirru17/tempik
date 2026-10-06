@@ -2,7 +2,8 @@
 
 Tempik is a **self-hosted disposable email** service that runs entirely on **Cloudflare Workers** — no VPS required. It uses Cloudflare Email Workers to receive inbound email, D1 for storage, and serves a clean web UI from the edge.
 
-> **Repo**: [github.com/hirotomasato/tempik](https://github.com/hirotomasato/tempik)
+> **Repo**: [github.com/haerubirru17/tempik](https://github.com/haerubirru17/tempik)
+> **Live Web**: [tempik.haerubirru.my.id](https://tempik.haerubirru.my.id)
 
 ---
 
