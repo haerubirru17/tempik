@@ -156,40 +156,71 @@ button:active {
   flex-shrink: 0;
 }
 
-/* Main Panel */
+/* Main Panel (Kanvas Putih dengan Border Tebal) */
 .panel {
   background: var(--bg-card);
   border: var(--border-thick);
   border-radius: var(--radius);
   box-shadow: var(--shadow-hard-lg);
   overflow: hidden;
+  margin-top: 6px;
 }
 
 .panel-head {
-  padding: 14px 18px;
+  padding: 16px 18px;
   border-bottom: var(--border-thick);
-  background: var(--bg-subtle);
+  background: var(--yellow);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
+}
+
+.inbox-badge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.inbox-icon-box {
+  width: 38px;
+  height: 38px;
+  background: var(--bg-card);
+  border: var(--border-med);
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  box-shadow: 2px 2px 0 var(--shadow);
+  flex-shrink: 0;
+}
+
+.inbox-label {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  color: #4B5563;
+  margin-bottom: 2px;
 }
 
 .panel-head h2 {
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 900;
   font-family: 'JetBrains Mono', monospace;
   color: var(--ink);
   word-break: break-all;
+  line-height: 1.2;
 }
 
-.panel-head span {
+.counter-badge {
   font-size: 12px;
-  font-weight: 800;
-  background: var(--yellow);
-  border: var(--border-thin);
+  font-weight: 900;
+  background: var(--bg-card);
+  border: var(--border-med);
   border-radius: 999px;
-  padding: 3px 12px;
-  box-shadow: 1.5px 1.5px 0 var(--shadow);
+  padding: 4px 12px;
+  box-shadow: 2px 2px 0 var(--shadow);
   flex-shrink: 0;
 }
 

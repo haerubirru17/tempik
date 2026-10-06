@@ -49,8 +49,16 @@
 
       <section class="panel">
         <div class="panel-head">
-          <h2 id="currentInbox">Belum ada inbox dipilih</h2>
-          <span id="messageCount">0 pesan</span>
+          <div class="inbox-badge-wrap">
+            <div class="inbox-icon-box">
+              <svg class="ico-svg" style="width:16px;height:16px;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <div class="inbox-label">KOTAK MASUK AKTIF</div>
+              <h2 id="currentInbox">Belum ada inbox dipilih</h2>
+            </div>
+          </div>
+          <span id="messageCount" class="counter-badge">0 pesan</span>
         </div>
         <div id="messageList" class="message-list"></div>
       </section>
