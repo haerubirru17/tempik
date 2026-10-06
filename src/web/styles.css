@@ -262,15 +262,24 @@ button:active {
 .message-detail {
   display: none;
   margin-top: 14px;
-  padding: 16px;
-  background: var(--bg-page);
+  padding: 12px;
+  background: #FFFFFF;
   border: var(--border-med);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-hard-sm);
+  overflow: hidden;
 }
 
 .message-item.active .message-detail {
   display: block;
+}
+
+.email-frame {
+  width: 100%;
+  min-height: 240px;
+  border: none;
+  display: block;
+  background: #FFFFFF;
 }
 
 .message-body {

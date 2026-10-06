@@ -107,18 +107,32 @@ async function loadMessages() {
     return;
   }
 
-  messageList.innerHTML = messages.map((msg, idx) => `
-    <div class="message-item ${idx === 0 ? 'active' : ''}" onclick="toggleDetail(this)">
-      <div class="message-meta">
-        <span class="message-from">DARI: <b>${escapeHtml(msg.from_address)}</b></span>
-        <span class="message-date">${new Date(msg.received_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'medium' })}</span>
+  messageList.innerHTML = messages.map((msg, idx) => {
+    let contentHtml = '';
+    const rawBody = msg.body || '';
+    const isHtml = /<[a-z][\s\S]*>/i.test(rawBody);
+
+    if (isHtml) {
+      // Render email HTML inside a secure sandbox iframe (auto-resizing)
+      const srcDoc = rawBody.replace(/"/g, '&quot;');
+      contentHtml = `<iframe class="email-frame" sandbox="allow-same-origin allow-popups" srcdoc="${srcDoc}" onload="this.style.height = (this.contentWindow.document.body.scrollHeight + 30) + 'px'"></iframe>`;
+    } else {
+      contentHtml = `<div class="message-body"><pre style="white-space:pre-wrap;font-family:inherit;">${escapeHtml(rawBody || '(Pesan kosong)')}</pre></div>`;
+    }
+
+    return `
+      <div class="message-item ${idx === 0 ? 'active' : ''}" onclick="toggleDetail(this)">
+        <div class="message-meta">
+          <span class="message-from">DARI: <b>${escapeHtml(msg.from_address)}</b></span>
+          <span class="message-date">${new Date(msg.received_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'medium' })}</span>
+        </div>
+        <div class="message-subject">${escapeHtml(msg.subject || '(Tanpa Subjek)')}</div>
+        <div class="message-detail">
+          ${contentHtml}
+        </div>
       </div>
-      <div class="message-subject">${escapeHtml(msg.subject || '(Tanpa Subjek)')}</div>
-      <div class="message-detail">
-        <div class="message-body">${msg.html || `<pre style="white-space:pre-wrap;font-family:inherit;">${escapeHtml(msg.body || '(Pesan kosong)')}</pre>`}</div>
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 function escapeHtml(s) {
