@@ -112,22 +112,55 @@ async function loadMessages() {
     const rawBody = msg.body || '';
     const isHtml = /<[a-z][\s\S]*>/i.test(rawBody);
 
+    // Auto-detect OTP Code (4-8 digit)
+    const textToScan = (msg.subject + ' ' + rawBody.replace(/<[^>]+>/g, ' ')).replace(/&#\d+;/g, ' ');
+    const otpMatch = textToScan.match(/(?:code|kode|otp|pin|verification|verifikasi)[\s:=#*—]+([0-9]{4,8})\b/i) || textToScan.match(/\b([0-9]{6})\b/);
+    const otpCode = otpMatch ? otpMatch[1] : null;
+
+    let otpBanner = '';
+    if (otpCode) {
+      otpBanner = `
+        <div class="otp-banner">
+          <div class="otp-left">
+            <span class="otp-tag">KODE OTP</span>
+            <span class="otp-code">${otpCode}</span>
+          </div>
+          <button type="button" class="btn-copy-otp" onclick="event.stopPropagation(); copyOtp('${otpCode}')">
+            <svg class="ico-svg" style="width:14px;height:14px;" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Salin Kode
+          </button>
+        </div>
+      `;
+    }
+
     if (isHtml) {
-      // Render email HTML inside a secure sandbox iframe (auto-resizing)
       const srcDoc = rawBody.replace(/"/g, '&quot;');
       contentHtml = `<iframe class="email-frame" sandbox="allow-same-origin allow-popups" srcdoc="${srcDoc}" onload="this.style.height = (this.contentWindow.document.body.scrollHeight + 30) + 'px'"></iframe>`;
     } else {
       contentHtml = `<div class="message-body"><pre style="white-space:pre-wrap;font-family:inherit;">${escapeHtml(rawBody || '(Pesan kosong)')}</pre></div>`;
     }
 
+    const initial = (msg.from_address.replace(/<.*>/, '').trim()[0] || 'M').toUpperCase();
+
     return `
       <div class="message-item ${idx === 0 ? 'active' : ''}" onclick="toggleDetail(this)">
-        <div class="message-meta">
-          <span class="message-from">DARI: <b>${escapeHtml(msg.from_address)}</b></span>
-          <span class="message-date">${new Date(msg.received_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'medium' })}</span>
+        <div class="msg-header-card">
+          <div class="msg-sender-row">
+            <div class="msg-avatar">${initial}</div>
+            <div class="msg-sender-info">
+              <div class="msg-from-name">${escapeHtml(msg.from_address)}</div>
+              <div class="msg-date-pill">${new Date(msg.received_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'medium' })}</div>
+            </div>
+            <div class="msg-toggle-btn">
+              <span class="msg-state-text">${idx === 0 ? 'Tutup' : 'Buka'}</span>
+              <svg class="msg-chevron ico-svg" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+          <div class="msg-subject-row">${escapeHtml(msg.subject || '(Tanpa Subjek)')}</div>
         </div>
-        <div class="message-subject">${escapeHtml(msg.subject || '(Tanpa Subjek)')}</div>
+
         <div class="message-detail">
+          ${otpBanner}
           ${contentHtml}
         </div>
       </div>
@@ -135,13 +168,26 @@ async function loadMessages() {
   }).join('');
 }
 
+function copyOtp(code) {
+  navigator.clipboard.writeText(code).then(() => showToast(`Kode OTP ${code} disalin!`));
+}
+
 function escapeHtml(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function toggleDetail(el) {
-  document.querySelectorAll('.message-item').forEach(m => { if (m !== el) m.classList.remove('active'); });
-  el.classList.toggle('active');
+  const isActive = el.classList.contains('active');
+  document.querySelectorAll('.message-item').forEach(m => {
+    m.classList.remove('active');
+    const txt = m.querySelector('.msg-state-text');
+    if (txt) txt.textContent = 'Buka';
+  });
+  if (!isActive) {
+    el.classList.add('active');
+    const txt = el.querySelector('.msg-state-text');
+    if (txt) txt.textContent = 'Tutup';
+  }
 }
 
 function showToast(text) {
