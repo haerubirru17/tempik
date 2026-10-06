@@ -12,9 +12,9 @@ database_id = "0e9fde2a-118b-45a2-b88d-7eff1fb6dc9a"
 [email]
 action = "process"
 
-[[routes]]
-pattern = "tempik.haerubirru.my.id"
-custom_domain = true
+# [[routes]]
+# pattern = "tempik.haerubirru.my.id"
+# custom_domain = true
 
 [vars]
 APP_NAME = "Tempik"
