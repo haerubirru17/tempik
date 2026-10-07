@@ -134,8 +134,16 @@ async function loadMessages() {
     }
 
     if (isHtml) {
-      const srcDoc = rawBody.replace(/"/g, '&quot;');
-      contentHtml = `<iframe class="email-frame" sandbox="allow-same-origin allow-popups" srcdoc="${srcDoc}" onload="this.style.height = (this.contentWindow.document.body.scrollHeight + 30) + 'px'"></iframe>`;
+      // Injeksi <base target="_blank"> agar semua link / tombol sign-in membuka tab baru di browser utama (anti kertas rusak)
+      const baseTag = '<base target="_blank">';
+      let preparedBody = rawBody;
+      if (/<head>/i.test(preparedBody)) {
+        preparedBody = preparedBody.replace(/<head>/i, `<head>${baseTag}`);
+      } else {
+        preparedBody = baseTag + preparedBody;
+      }
+      const srcDoc = preparedBody.replace(/"/g, '&quot;');
+      contentHtml = `<iframe class="email-frame" sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox" srcdoc="${srcDoc}" onload="this.style.height = (this.contentWindow.document.body.scrollHeight + 30) + 'px'"></iframe>`;
     } else {
       contentHtml = `<div class="message-body"><pre style="white-space:pre-wrap;font-family:inherit;">${escapeHtml(rawBody || '(Pesan kosong)')}</pre></div>`;
     }
