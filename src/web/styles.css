@@ -91,15 +91,15 @@ header p {
   border: var(--border-thick);
   border-radius: var(--radius);
   box-shadow: var(--shadow-hard);
-  padding: 14px;
+  padding: 12px;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 10px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .toolbar select {
-  flex: 1 1 200px;
+  width: 100%;
   font: inherit;
   font-weight: 800;
   font-family: 'JetBrains Mono', monospace;
@@ -114,11 +114,23 @@ header p {
   cursor: pointer;
 }
 
+.toolbar-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.toolbar-actions button {
+  padding: 9px 4px;
+  font-size: 12px;
+  width: 100%;
+}
+
 button {
   font: inherit;
   font-weight: 800;
-  font-size: 13px;
-  padding: 10px 15px;
+  font-size: 12.5px;
+  padding: 9px 12px;
   border: var(--border-med);
   border-radius: var(--radius-sm);
   background: var(--bg-card);
@@ -129,7 +141,7 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 button:hover {
@@ -163,10 +175,10 @@ button:active {
   border: var(--border-thick);
   border-radius: var(--radius);
   box-shadow: var(--shadow-hard);
-  padding: 14px;
-  margin-bottom: 14px;
+  padding: 12px;
+  margin-bottom: 12px;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 10px;
   animation: slideDown 0.15s ease-out;
 }
@@ -175,22 +187,14 @@ button:active {
   display: none !important;
 }
 
-.new-box input {
-  flex: 1 1 180px;
-  font: inherit;
-  font-weight: 700;
-  font-size: 13.5px;
-  padding: 10px 14px;
-  border: var(--border-med);
-  border-radius: var(--radius-sm);
-  background: var(--bg-page);
-  color: var(--ink);
-  outline: none;
-  box-shadow: var(--shadow-hard-sm);
+.new-box-row {
+  display: flex;
+  gap: 8px;
 }
 
-.new-box select {
-  flex: 0 0 160px;
+.new-box input {
+  flex: 1 1 auto;
+  min-width: 0;
   font: inherit;
   font-weight: 700;
   font-size: 13px;
@@ -201,7 +205,31 @@ button:active {
   color: var(--ink);
   outline: none;
   box-shadow: var(--shadow-hard-sm);
+}
+
+.new-box select {
+  flex: 0 0 145px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 10px 8px;
+  border: var(--border-med);
+  border-radius: var(--radius-sm);
+  background: var(--bg-page);
+  color: var(--ink);
+  outline: none;
+  box-shadow: var(--shadow-hard-sm);
   cursor: pointer;
+}
+
+.new-box-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.new-box-actions button {
+  width: 100%;
 }
 
 #createCustomBtn {

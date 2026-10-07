@@ -225,6 +225,7 @@ createCustomBtn.addEventListener('click', async () => {
     body: JSON.stringify({ localPart, domain })
   });
   localPartInput.value = '';
+  newBox.classList.add('hidden');
   await loadInboxes(inbox.address);
 });
 
@@ -235,6 +236,7 @@ createRandomBtn.addEventListener('click', async () => {
     body: JSON.stringify({ domain })
   });
   localPartInput.value = '';
+  newBox.classList.add('hidden');
   await loadInboxes(inbox.address);
 });
 
