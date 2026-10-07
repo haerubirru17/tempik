@@ -47,12 +47,18 @@ export async function getSessionInboxes(db: D1Database, sessionId: string): Prom
     .then((r) => r.results);
 }
 
-// ---- Messages ----
+// ---- Messages (Auto-burn: pesan >30 menit otomatis terhapus dari D1 dan tidak tampil) ----
 
 export async function getMessages(db: D1Database, inboxAddress: string): Promise<Message[]> {
+  // Purge pesan yang sudah kadaluwarsa (> 30 menit) secara lazy saat dibaca
+  await db
+    .prepare("DELETE FROM messages WHERE received_at < datetime('now', '-30 minutes')")
+    .run()
+    .catch(() => {});
+
   return db
     .prepare(
-      'SELECT * FROM messages WHERE inbox_address = ? ORDER BY received_at DESC'
+      "SELECT * FROM messages WHERE inbox_address = ? AND received_at >= datetime('now', '-30 minutes') ORDER BY received_at DESC"
     )
     .bind(inboxAddress)
     .all<Message>()
