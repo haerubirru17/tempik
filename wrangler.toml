@@ -18,7 +18,7 @@ action = "process"
 
 [vars]
 APP_NAME = "Tempik"
-MAIL_DOMAIN = "haerubirru.my.id"
+MAIL_DOMAIN = "haerubirru.my.id, biruruang.my.id"
 WEB_HOST = "tempik.haerubirru.my.id"
 
 [assets]
