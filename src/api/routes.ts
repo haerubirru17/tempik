@@ -92,6 +92,11 @@ api.post('/inboxes', async (c) => {
 
   const requested: string = (body.localPart || '').trim().toLowerCase();
 
+  // Validate localPart: hanya izinkan karakter alfanumerik, titik, underscore, dan hyphen (RFC standard)
+  if (requested && !/^[a-z0-9._-]+$/.test(requested)) {
+    return c.json({ error: 'Username hanya boleh mengandung huruf, angka, titik, underscore, dan strip.' }, 400);
+  }
+
   let address: string;
   if (requested) {
     address = `${requested}@${domain}`;
