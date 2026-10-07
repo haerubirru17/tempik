@@ -259,11 +259,11 @@ button:active {
   margin-top: 6px;
 }
 
-/* Header Kotak Masuk Aktif */
+/* Header Kotak Masuk Aktif (Warna Kontras Pemisah) */
 .panel-head {
   padding: 14px 16px;
   border-bottom: var(--border-thick);
-  background: var(--bg-card);
+  background: var(--bg-subtle);
   display: flex;
   justify-content: space-between;
   align-items: center;
