@@ -41,23 +41,39 @@ async function fetchJson(url, options = {}) {
   return res.json();
 }
 
+const VIP_KEY = 'tempik_vip_pass';
+let savedVipPass = localStorage.getItem(VIP_KEY) || '';
+
 async function loadConfig() {
   appConfig = await fetchJson('/api/config', { headers: {} });
   document.title = appConfig.appName;
   appTitle.textContent = appConfig.appName;
   appSubtitle.textContent = `Disposable inbox for ${appConfig.mailDomain}`;
-  localPartInput.placeholder = `username atau kosongkan untuk random @${appConfig.mailDomain}`;
+  localPartInput.placeholder = `username atau kosongkan untuk acak`;
 
   // Populate domain selector
   const domains = appConfig.mailDomains || [appConfig.mailDomain];
+  const vipDomains = appConfig.vipDomains || [];
   domainSelect.innerHTML = '';
   domains.forEach((d) => {
     const opt = document.createElement('option');
     opt.value = d;
-    opt.textContent = `@${d}`;
+    const isVip = vipDomains.includes(d);
+    opt.textContent = isVip ? `⭐ @${d} (VIP)` : `@${d}`;
     domainSelect.appendChild(opt);
   });
   if (domains.length <= 1) domainSelect.style.display = 'none';
+}
+
+function promptVipPassword(targetDomain) {
+  if (savedVipPass) return savedVipPass;
+  const pass = prompt(`Domain @${targetDomain} dikunci khusus Owner/VIP.\nMasukkan Password VIP:`);
+  if (pass) {
+    savedVipPass = pass.trim();
+    localStorage.setItem(VIP_KEY, savedVipPass);
+    return savedVipPass;
+  }
+  return '';
 }
 
 async function ensureSession() {
@@ -228,24 +244,62 @@ deleteBtn.addEventListener('click', async () => {
 createCustomBtn.addEventListener('click', async () => {
   const localPart = localPartInput.value.trim();
   const domain = domainSelect.value;
-  const inbox = await fetchJson('/api/inboxes', {
-    method: 'POST',
-    body: JSON.stringify({ localPart, domain })
-  });
-  localPartInput.value = '';
-  newBox.classList.add('hidden');
-  await loadInboxes(inbox.address);
+  const vipDomains = appConfig.vipDomains || [];
+  let vipPass = '';
+  if (vipDomains.includes(domain)) {
+    vipPass = promptVipPassword(domain);
+    if (!vipPass) {
+      alert('Pembuatan dibatalkan: Password VIP diperlukan.');
+      return;
+    }
+  }
+
+  try {
+    const inbox = await fetchJson('/api/inboxes', {
+      method: 'POST',
+      body: JSON.stringify({ localPart, domain, vipPassword: vipPass }),
+      headers: vipPass ? { 'x-vip-password': vipPass } : {}
+    });
+    localPartInput.value = '';
+    newBox.classList.add('hidden');
+    await loadInboxes(inbox.address);
+  } catch (err) {
+    if (String(err.message).includes('terkunci') || String(err.message).includes('403')) {
+      localStorage.removeItem(VIP_KEY);
+      savedVipPass = '';
+    }
+    alert(err.message);
+  }
 });
 
 createRandomBtn.addEventListener('click', async () => {
   const domain = domainSelect.value;
-  const inbox = await fetchJson('/api/inboxes', {
-    method: 'POST',
-    body: JSON.stringify({ domain })
-  });
-  localPartInput.value = '';
-  newBox.classList.add('hidden');
-  await loadInboxes(inbox.address);
+  const vipDomains = appConfig.vipDomains || [];
+  let vipPass = '';
+  if (vipDomains.includes(domain)) {
+    vipPass = promptVipPassword(domain);
+    if (!vipPass) {
+      alert('Pembuatan dibatalkan: Password VIP diperlukan.');
+      return;
+    }
+  }
+
+  try {
+    const inbox = await fetchJson('/api/inboxes', {
+      method: 'POST',
+      body: JSON.stringify({ domain, vipPassword: vipPass }),
+      headers: vipPass ? { 'x-vip-password': vipPass } : {}
+    });
+    localPartInput.value = '';
+    newBox.classList.add('hidden');
+    await loadInboxes(inbox.address);
+  } catch (err) {
+    if (String(err.message).includes('terkunci') || String(err.message).includes('403')) {
+      localStorage.removeItem(VIP_KEY);
+      savedVipPass = '';
+    }
+    alert(err.message);
+  }
 });
 
 Promise.all([loadConfig(), ensureSession()]).then(() => loadInboxes()).catch((err) => {

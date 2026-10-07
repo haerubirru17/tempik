@@ -17,11 +17,17 @@ export interface ApiEnv {
   DB: D1Database;
   APP_NAME: string;
   MAIL_DOMAIN: string;
+  VIP_DOMAINS?: string;
+  VIP_PASSWORD?: string;
   WEB_HOST: string;
 }
 
 function getDomains(env: ApiEnv): string[] {
   return env.MAIL_DOMAIN.split(',').map(d => d.trim()).filter(Boolean);
+}
+
+function getVipDomains(env: ApiEnv): string[] {
+  return (env.VIP_DOMAINS || '').split(',').map(d => d.trim()).filter(Boolean);
 }
 
 function defaultDomain(env: ApiEnv): string {
@@ -46,11 +52,13 @@ const api = new Hono<{ Bindings: ApiEnv }>();
 // ---- GET /api/config ----
 api.get('/config', (c) => {
   const domains = getDomains(c.env);
+  const vipDomains = getVipDomains(c.env);
   return c.json({
     appName: c.env.APP_NAME || 'Tempik',
     mailDomain: domains[0] || 'example.com',
     mailDomains: domains,
-    webHost: c.env.WEB_HOST || 'tempik.example.com',
+    vipDomains,
+    webHost: c.env.WEB_HOST || 'tempik.haerubirru.my.id',
   });
 });
 
@@ -88,6 +96,16 @@ api.post('/inboxes', async (c) => {
   // Validate: reject unknown domains
   if (requestedDomain && !domains.includes(requestedDomain)) {
     return c.json({ error: `Invalid domain: ${requestedDomain}. Allowed: ${domains.join(', ')}` }, 400);
+  }
+
+  // Validate VIP Domain Password
+  const vipDomains = getVipDomains(c.env);
+  if (vipDomains.includes(domain)) {
+    const requiredPass = c.env.VIP_PASSWORD || 'birru17';
+    const providedPass = (c.req.header('x-vip-password') || body.vipPassword || '').trim();
+    if (providedPass !== requiredPass) {
+      return c.json({ error: 'Domain @berbirru.com terkunci. Masukkan password VIP yang valid.' }, 403);
+    }
   }
 
   const requested: string = (body.localPart || '').trim().toLowerCase();
