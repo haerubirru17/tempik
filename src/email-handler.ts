@@ -24,7 +24,8 @@ export async function handleEmail(message: ForwardableEmailMessage, env: EmailHa
     const parsed = await parser.parse(rawBuffer);
 
     const subject = parsed.subject || '(no subject)';
-    const body = parsed.text?.trim() || parsed.html || '';
+    // Prioritaskan format HTML agar styling, tombol, dan link email tampil utuh dan rapi di UI
+    const body = parsed.html || parsed.text?.trim() || '';
 
     const db = env.DB;
 

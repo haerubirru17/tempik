@@ -151,7 +151,7 @@ async function loadMessages() {
 
     if (isHtml) {
       // Injeksi <base target="_blank"> agar semua link / tombol sign-in membuka tab baru di browser utama (anti kertas rusak)
-      const baseTag = '<base target="_blank">';
+      const baseTag = '<base target="_blank"><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;margin:0;padding:12px;color:#1E293B;line-height:1.5;word-break:break-word;}img{max-width:100%!important;height:auto!important;}table{max-width:100%!important;}</style>';
       let preparedBody = rawBody;
       if (/<head>/i.test(preparedBody)) {
         preparedBody = preparedBody.replace(/<head>/i, `<head>${baseTag}`);
