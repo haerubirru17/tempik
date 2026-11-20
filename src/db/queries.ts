@@ -47,19 +47,17 @@ export async function getSessionInboxes(db: D1Database, sessionId: string): Prom
     .then((r) => r.results);
 }
 
-// ---- Messages (Auto-burn: pesan sementara >30 menit terhapus, KECUALI domain resmi berbirru.com permanen) ----
+// ---- Messages (Auto-burn) ----
+// SEMUA domain berlaku sama: pesan lebih tua dari 30 menit dihapus (tidak ada lagi pengecualian permanen).
 
 export async function getMessages(db: D1Database, inboxAddress: string): Promise<Message[]> {
-  // Purge pesan sementara yang sudah kadaluwarsa (> 30 menit), JANGAN hapus inbox resmi berbirru.com
   await db
-    .prepare("DELETE FROM messages WHERE received_at < datetime('now', '-30 minutes') AND inbox_address NOT LIKE '%@berbirru.com'")
+    .prepare("DELETE FROM messages WHERE received_at < datetime('now', '-30 minutes')")
     .run()
     .catch(() => {});
 
   return db
-    .prepare(
-      "SELECT * FROM messages WHERE inbox_address = ? AND (inbox_address LIKE '%@berbirru.com' OR received_at >= datetime('now', '-30 minutes')) ORDER BY received_at DESC"
-    )
+    .prepare("SELECT * FROM messages WHERE inbox_address = ? AND received_at >= datetime('now', '-30 minutes') ORDER BY received_at DESC")
     .bind(inboxAddress)
     .all<Message>()
     .then((r) => r.results);
